@@ -28,10 +28,10 @@ h1 {
 </div>
 
 ---
-transition: fade-out
+transition: none
 ---
 
-# AST
+# 1. AST
 
 ````md magic-move
 ```rs
@@ -70,7 +70,7 @@ pub struct FunctionExpression<'a> {
 transition: slide-left
 ---
 
-# AST
+# 1. AST
 
 ````md magic-move
 ```rs
@@ -107,7 +107,7 @@ transition: slide-left
 clicks: 8
 ---
 
-# Pointer tagging
+# 2. Pointer tagging
 
 <div style="display: flex; gap: 24px;">
 <div v-click="1" style="flex: 1;">
@@ -246,738 +246,228 @@ struct BinaryExpression<'a> {
 </div>
 
 ---
-transition: slide-left
----
-
-# What's taking the time?
-
-<div style="font-size: 2em">
-
-* <span style="color: #F74C00">**Rust side:**</span> Serialize AST to JSON 🐌
-* <span style="color: #A52B00">**Transfer:**</span> Send JSON string to JS 🐌
-* <span style="color: #F7DF1E">**JS side:**</span> `JSON.parse()` 🐌
-
-</div>
-
----
 transition: fade-out
 ---
 
-# Serialization format
+# 3. Semantic
 
-<div style="font-size: 2em">
+<div v-click="1" style="font-size: 1.5em;">
 
-* Compact
-* Well specified
-* Fast to serialize
-* Fast to deserialize
+* Methods on types, not on `Semantic` / `Scoping`
+* `NodeId`s in AST nodes unlocks a lot
 
 </div>
 
----
-transition: fade-out
----
+<div v-click="2" style="font-size: 1.2em;">
 
-# AST in memory
+Before:
+
+```rs
+let ast_node: AstNode = /* ... */;
+let parent: AstKind = ctx.nodes.parent_kind(ast_node.id());
+```
+
+After:
+
+```rs
+let expr: Expression = /* ... */;
+let parent: AstKind = expr.parent(ctx);
+```
+
+</div>
 
 <style>
-table {
-  line-height: 1.2;
-}
-table td, table th {
-  padding: 2px 8px;
-}
-table thead th {
-  border-bottom: 3px solid #333;
-}
-.blue {
-  color: #4A90E2;
-}
-.blur-on-text {
-  transition: filter 0.5s ease;
-}
-/* When the text overlay is visible, blur the code */
-body:has(.text-overlay:not(.slidev-vclick-hidden)) .blur-on-text {
-  filter: blur(3px);
-}
+pre code { font-size: 1.8em; }
 </style>
-
-<div style="display: flex; gap: 3rem; height: 100%;">
-  <div style="flex: 1;" class="blur-on-text">
-
-```rs
-pub struct Program<'a> {
-    pub span: Span,
-    pub source_type: SourceType,
-    pub body: Vec<'a, Statement<'a>>,
-}
-
-pub struct Span {
-    pub start: u32,
-    pub end: u32,
-}
-
-pub enum SourceType {
-    Module,
-    Script,
-}
-
-pub enum Statement<'a> {
-    BlockStatement(Box<'a, BlockStatement<'a>>),
-    BreakStatement(Box<'a, BreakStatement<'a>>),
-    ContinueStatement(Box<'a, ContinueStatement<'a>>),
-    // ...
-}
-```
-
-  </div>
-  <div v-click style="flex: 1; position: relative;">
-
-<svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;">
-  <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="7"
-     refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#ff6b6b" />
-    </marker>
-  </defs>
-  <path d="M 350 140 C 420 140, 420 202, 350 202" stroke="#ff6b6b" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-  <path d="M 350 264 C 420 264, 420 364, 300 404" stroke="#ff6b6b" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-  <path d="M 350 365 C 420 365, 420 397, 300 429" stroke="#ff6b6b" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-</svg>
-
-| **Bytes**                       | **Data**                                                 |
-|---------------------------------|----------------------------------------------------------|
-| <span class="blue">0-3</span>   | `span.start` (32 bit integer)                            |
-| <span class="blue">4-7</span>   | `span.end` (32 bit integer)                              |
-| <span class="blue">8</span>     | `SourceType` (0 = `Module`, 1 = `Script`)                |
-| <span class="blue">9-15</span>  | -                                                        |
-| <span class="blue">16-23</span> | Pointer to `statements` array                            |
-| <span class="blue">24-31</span> | Length of `statements` array                             |
-| <span class="blue">32</span>    | Statement 1 `type`<br />(e.g. 0 for `BlockStatement`)    |
-| <span class="blue">33-39</span> | -                                                        |
-| <span class="blue">40-47</span> | Statement 1 pointer                                      |
-| <span class="blue">48</span>    | Statement 2 `type`<br />(e.g. 1 for `ContinueStatement`) |
-| <span class="blue">49-55</span> | -                                                        |
-| <span class="blue">56-63</span> | Statement 2 pointer                                      |
-| <span class="blue">64...</span> | ...                                                      |
-
-  </div>
-</div>
-
-<div v-click class="text-overlay" style="position: absolute; top: 50%; left: 27%; transform: translate(-50%, -50%); font-size: 2.4em; color: #F74C00; font-weight: bold; text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6); z-index: 20;">
-  This looks a lot like<br />
-  a binary serialization<br />
-  format
-  <div style="font-size: 2em; text-align: right;">→</div>
-</div>
-
----
-transition: fade-out
----
-
-# `#[repr(C)]`
-
-````md magic-move
-```rs
-pub struct BinaryExpression<'a> {
-    pub node_id: u32,             // 4 bytes
-    pub span: Span,               // 8 bytes
-    pub left: Expression<'a>,     // 16 bytes
-    pub operator: BinaryOperator, // 1 byte
-    pub right: Expression<'a>,    // 16 bytes
-}
-```
-```rs
-pub struct BinaryExpression<'a> { // 56 bytes
-    pub node_id: u32,             // 4 bytes
-    __padding__: [u8; 4],         // 4 bytes
-    pub span: Span,               // 8 bytes
-    pub left: Expression<'a>,     // 16 bytes
-    pub operator: BinaryOperator, // 1 byte
-    __padding__: [u8; 7],         // 7 bytes
-    pub right: Expression<'a>,    // 16 bytes
-}
-```
-```rs
-#[repr(Rust)]
-pub struct BinaryExpression<'a> { // 48 bytes
-    pub left: Expression<'a>,     // 16 bytes
-    pub right: Expression<'a>,    // 16 bytes
-    pub span: Span,               // 8 bytes
-    pub node_id: u32,             // 4 bytes
-    pub operator: BinaryOperator, // 1 byte
-    __padding__: [u8; 3],         // 3 bytes
-}
-```
-```rs
-#[repr(C)]
-pub struct BinaryExpression<'a> { // 56 bytes
-    pub node_id: u32,             // 4 bytes
-    __padding__: [u8; 4],         // 4 bytes
-    pub span: Span,               // 8 bytes
-    pub left: Expression<'a>,     // 16 bytes
-    pub operator: BinaryOperator, // 1 byte
-    __padding__: [u8; 7],         // 7 bytes
-    pub right: Expression<'a>,    // 16 bytes
-}
-```
-````
-
----
-transition: fade-out
----
-
-# Arena allocator
-
-<img src="./images/bumpalo.png" style="width: 100%" />
-
-<div v-click style="position: absolute; bottom: 25%; left: 0; right: 0; text-align: center; font-size: 3em;">
-= <code>Uint8Array</code>
-</div>
-
-<div v-click style="position: absolute; bottom: 10%; left: 0; right: 0; text-align: center; font-size: 3em;">
-Sharing state by sharing memory
-</div>
-
----
-transition: fade-out
----
-
-# AST in memory
-
-<style>
-table {
-  line-height: 1.2;
-}
-table td, table th {
-  padding: 2px 8px;
-}
-table thead th {
-  border-bottom: 3px solid #333;
-}
-.blue {
-  color: #4A90E2;
-}
-.blur-on-text {
-  transition: filter 0.5s ease;
-}
-/* When the text overlay is visible, blur the code */
-body:has(.text-overlay:not(.slidev-vclick-hidden)) .blur-on-text {
-  filter: blur(3px);
-}
-</style>
-
-<div style="display: flex; gap: 3rem; height: 100%;">
-  <div style="flex: 1;">
-
-```rs
-pub struct Program<'a> {
-    pub span: Span,
-    pub source_type: SourceType,
-    pub body: Vec<'a, Statement<'a>>,
-}
-
-pub struct Span {
-    pub start: u32,
-    pub end: u32,
-}
-
-pub enum SourceType {
-    Module,
-    Script,
-}
-
-pub enum Statement<'a> {
-    BlockStatement(Box<'a, BlockStatement<'a>>),
-    BreakStatement(Box<'a, BreakStatement<'a>>),
-    ContinueStatement(Box<'a, ContinueStatement<'a>>),
-    // ...
-}
-```
-
-  </div>
-  <div style="flex: 1; position: relative;">
-
-<svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;">
-  <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="7"
-     refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#ff6b6b" />
-    </marker>
-  </defs>
-  <path d="M 350 140 C 420 140, 420 202, 350 202" stroke="#ff6b6b" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-  <path d="M 350 264 C 420 264, 420 364, 300 404" stroke="#ff6b6b" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-  <path d="M 350 365 C 420 365, 420 397, 300 429" stroke="#ff6b6b" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-</svg>
-
-| **Bytes**                       | **Data**                                                 |
-|---------------------------------|----------------------------------------------------------|
-| <span class="blue">0-3</span>   | `span.start` (32 bit integer)                            |
-| <span class="blue">4-7</span>   | `span.end` (32 bit integer)                              |
-| <span class="blue">8</span>     | `SourceType` (0 = `Module`, 1 = `Script`)                |
-| <span class="blue">9-15</span>  | -                                                        |
-| <span class="blue">16-23</span> | Pointer to `statements` array                            |
-| <span class="blue">24-31</span> | Length of `statements` array                             |
-| <span class="blue">32</span>    | Statement 1 `type`<br />(e.g. 0 for `BlockStatement`)    |
-| <span class="blue">33-39</span> | -                                                        |
-| <span class="blue">40-47</span> | Statement 1 pointer                                      |
-| <span class="blue">48</span>    | Statement 2 `type`<br />(e.g. 1 for `ContinueStatement`) |
-| <span class="blue">49-55</span> | -                                                        |
-| <span class="blue">56-63</span> | Statement 2 pointer                                      |
-| <span class="blue">64...</span> | ...                                                      |
-
-  </div>
-</div>
-
----
-transition: fade-out
-clicks: 2
----
-
-# Pointers
-
-<div style="display: flex; flex-direction: column; align-items: center; margin-top: 4rem;">
-  <div style="font-family: monospace; font-size: 2em; margin-bottom: 2rem; color: #888; position: relative;">
-    <span :style="{ opacity: $clicks >= 2 ? 0 : 1, transition: 'opacity 0.3s' }">64-bit pointer</span>
-    <span :style="{ opacity: $clicks >= 2 ? 1 : 0, transition: 'opacity 0.3s', position: 'absolute', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }">32-bit pointer</span>
-  </div>
-  <div style="display: flex; border: 3px solid #F74C00; border-radius: 8px; overflow: hidden; font-family: monospace; font-size: 2.2em;">
-    <div :style="{ padding: '0.6em 1.6em', background: 'rgba(247, 76, 0, 0.15)', opacity: $clicks >= 2 ? 0.07 : 1, transition: 'opacity 0.3s' }">DEAD_BEEF</div>
-    <div style="width: 3px; background: #F74C00;"></div>
-    <div style="padding: 0.6em 1.6em; background: rgba(165, 43, 0, 0.15);">0123_4567</div>
-  </div>
-  <div style="display: flex; width: 100%; max-width: 600px; margin-top: 0.5rem;">
-    <div :style="{ flex: 1, textAlign: 'center', fontSize: '1.2em', color: '#F74C00', opacity: $clicks >= 2 ? 0.15 : 1, transition: 'opacity 0.3s' }">upper 32 bits</div>
-    <div style="flex: 1; text-align: center; font-size: 1.2em; color: #A52B00;">lower 32 bits</div>
-  </div>
-  <div v-click style="font-size: 2.5em; margin-top: 0.5em; color: #888;">Buffer size 4 GiB, aligned 4 GiB</div>
-</div>
-
----
-transition: fade-out
----
-
-# Layout
-
-````md magic-move
-```rs
-#[repr(C)]
-pub struct BinaryExpression<'a> {
-    pub node_id: u32,
-    pub span: Span,
-    pub left: Expression<'a>,
-    pub operator: BinaryOperator,
-    pub right: Expression<'a>,
-}
-```
-```rs
-#[repr(C)]
-pub struct BinaryExpression<'a> {
-    pub node_id: u32,             // 4 bytes
-    pub span: Span,
-    pub left: Expression<'a>,
-    pub operator: BinaryOperator,
-    pub right: Expression<'a>,
-}
-```
-```rs
-#[repr(C)]
-pub struct BinaryExpression<'a> {
-    pub node_id: u32,             // 4 bytes
-    pub span: Span,
-    pub left: Expression<'a>,
-    pub operator: BinaryOperator,
-    pub right: Expression<'a>,
-}
-
-#[repr(C, u8)]
-pub enum Expression<'a> {         // 16 bytes
-    BooleanLiteral(Box<'a, BooleanLiteral>) = 0,
-    NullLiteral(Box<'a, NullLiteral>) = 1,
-    NumericLiteral(Box<'a, NumericLiteral<'a>>) = 2,
-    BigIntLiteral(Box<'a, BigIntLiteral<'a>>) = 3,
-}
-
-#[repr(u8)]
-pub enum BinaryOperator {         // 1 byte
-    Equality = 0,
-    Inequality = 1,
-    StrictEquality = 2,
-    // ...
-}
-```
-```rs
-#[repr(C)]
-pub struct BinaryExpression<'a> { // 48 bytes
-    pub node_id: u32,             // 4 bytes
-    pub span: Span,               // 8 bytes
-    pub left: Expression<'a>,     // 16 bytes
-    pub operator: BinaryOperator, // 1 byte
-    pub right: Expression<'a>,    // 16 bytes
-}
-
-#[repr(C, u8)]
-pub enum Expression<'a> {         // 16 bytes
-    BooleanLiteral(Box<'a, BooleanLiteral>) = 0,
-    NullLiteral(Box<'a, NullLiteral>) = 1,
-    NumericLiteral(Box<'a, NumericLiteral<'a>>) = 2,
-    BigIntLiteral(Box<'a, BigIntLiteral<'a>>) = 3,
-}
-
-#[repr(u8)]
-pub enum BinaryOperator {         // 1 byte
-    Equality = 0,
-    Inequality = 1,
-    StrictEquality = 2,
-    // ...
-}
-```
-````
-
----
-transition: fade-out
----
-
-# Layout
-
-```rs
-assert!(size_of::<BinaryExpression>() == 48);
-assert!(align_of::<BinaryExpression>() == 8);
-assert!(offset_of!(BinaryExpression, node_id) == 40);
-assert!(offset_of!(BinaryExpression, span) == 0);
-assert!(offset_of!(BinaryExpression, left) == 8);
-assert!(offset_of!(BinaryExpression, operator) == 44);
-assert!(offset_of!(BinaryExpression, right) == 24);
-
-assert!(size_of::<Expression>() == 16);
-assert!(align_of::<Expression>() == 8);
-
-assert!(size_of::<BinaryOperator>() == 1);
-assert!(align_of::<BinaryOperator>() == 1);
-```
-
----
-transition: fade-out
----
-
-# Codegen deserializer
-
-```js
-function deserializeBinaryExpression(pos) {
-  return {
-    type: "BinaryExpression",
-    left: deserializeExpression(pos + 8),
-    operator: deserializeBinaryOperator(pos + 44),
-    right: deserializeExpression(pos + 24),
-    start: deserializeU32(pos),
-    end: deserializeU32(pos + 4),
-  };
-}
-
-function deserializeExpression(pos) {
-  switch (uint8[pos]) {
-    case 0: return deserializeBoxBooleanLiteral(pos + 8);
-    case 1: return deserializeBoxNullLiteral(pos + 8);
-    case 2: return deserializeBoxNumericLiteral(pos + 8);
-    case 3: return deserializeBoxBigIntLiteral(pos + 8);
-    // ...
-  }
-}
-
-function deserializeBoxBooleanLiteral(pos) {
-  return deserializeBooleanLiteral(uint32[pos >> 2]);
-}
-```
-
----
-transition: fade-out
----
-
-# Codegen deserializer
-
-```js
-function deserializeVecExpression(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-  pos = uint32[pos32];
-  let endPos = pos + uint32[pos32 + 2] * 16;
-  for (; pos !== endPos; pos += 16) {
-    arr.push(deserializeExpression(pos));
-  }
-  return arr;
-}
-
-function deserializeOptionExpression(pos) {
-  if (uint8[pos] === 51) return null;
-  return deserializeExpression(pos);
-}
-
-function deserializeBool(pos) {
-  return uint8[pos] === 1;
-}
-```
-
----
-transition: fade-out
-clicks: 1
----
-
-# ESTree
-
-<div style="overflow: hidden; height: 420px;">
-<div :style="{ transform: $clicks >= 1 ? 'translateY(-70%)' : 'translateY(0)', transition: 'transform 1.5s ease-in-out' }">
-
-```js
-function deserializeTSModuleDeclaration(pos) {
-  let kind = deserializeTSModuleDeclarationKind(pos + 88),
-    start = deserializeU32(pos),
-    end = deserializeU32(pos + 4),
-    declare = deserializeBool(pos + 89),
-    node,
-    body = deserializeOptionTSModuleDeclarationBody(pos + 64);
-  if (body === null) {
-    node = {
-      type: "TSModuleDeclaration",
-      id: null,
-      kind,
-      declare,
-      global: false,
-      start,
-      end,
-    };
-    node.id = deserializeTSModuleDeclarationName(pos + 8);
-  } else {
-    node = {
-      type: "TSModuleDeclaration",
-      id: null,
-      body,
-      kind,
-      declare,
-      global: false,
-      start,
-      end,
-    };
-    let id = deserializeTSModuleDeclarationName(pos + 8);
-    if (body.type === "TSModuleBlock") node.id = id;
-    else {
-      let innerId = body.id;
-      if (innerId.type === "Identifier")
-        node.id = {
-          type: "TSQualifiedName",
-          left: id,
-          right: innerId,
-          start: id.start,
-          end: innerId.end,
-        };
-      else {
-        // Replace `left` of innermost `TSQualifiedName` with a nested `TSQualifiedName` with `id` of
-        // this module on left, and previous `left` of innermost `TSQualifiedName` on right
-        node.id = innerId;
-        let { start } = id;
-        for (;;) {
-          innerId.start = start;
-          if (innerId.left.type === "Identifier") break;
-          innerId = innerId.left;
-        }
-        let right = innerId.left;
-        innerId.left = {
-          type: "TSQualifiedName",
-          left: id,
-          right,
-          start,
-          end: right.end,
-        };
-      }
-      if (Object.hasOwn(body, "body")) {
-        body = body.body;
-        node.body = body;
-      } else body = null;
-    }
-  }
-  return node;
-}
-```
-
-</div>
-</div>
 
 ---
 transition: slide-left
 ---
 
-# Recap
+# 3. Semantic
 
-<div style="font-size: 2em;">
+<div style="font-size: 1.5em;">
+
+* Methods on types, not on `Semantic` / `Scoping`
+* `NodeId`s in AST nodes unlocks a lot
+
+</div>
+
+<div style="font-size: 1.2em;">
+
+Before:
+
+```rs
+let func: Function = /* ... */;
+let scope_id: ScopeId = func.scope_id();
+let parent_scope_id: ScopeId = ctx.scoping.parent_scope_id(node_id);
+let parent_scope_flags: ScopeFlags = ctx.scoping.scope_flags(parent_scope_id);
+```
+
+After:
+
+```rs
+let func: Function = /* ... */;
+let scope_id: ScopeFlags = func.scope_flags(ctx);
+```
+
+</div>
+
+<style>
+pre code { font-size: 1.5em; }
+</style>
+
+---
+transition: fade-out
+---
+
+# 4. Ast type
+
+<div style="font-size: 1.5em;">
+
 <v-clicks>
 
-* Arena allocator
-* `#[repr(C)]`
-* 4 GiB alignment
-* AST schema
-* Codegen deserializer
-* Custom transforms for ESTree conversion
+* Now: Allocator owns AST
+* Instead: AST owns Allocator
 
 </v-clicks>
+
 </div>
 
 ---
 transition: fade-out
 ---
 
-# Lazy deserialization
+# 4. Ast type
 
-<div style="font-size: 2em;">
-<v-click>
+<div v-click="1" style="font-size: 1.5em;">
 
-* Do less work on JS side
+Now:
 
-</v-click>
-<v-click>
+```rs
+let allocator = Allocator::default();
 
-* Minimize garbage collection
+let parser_ret = Parser::new(&allocator, source_text, source_type).with_options(parse_options).parse();
+assert!(parser_ret.errors.is_empty());
+let program = parser_ret.program;
 
-</v-click>
-<v-click>
+let semantic_ret = SemanticBuilder::new().build(&program);
+assert!(semantic_ret.errors.is_empty());
+let scoping = semantic_ret.semantic.into_scoping();
 
-* Hard part is ESTree conversion
+let trans_ret = Transformer::new(&allocator, path, transform_options).build_with_scoping(scoping, &mut program);
+assert!(trans_ret.errors.is_empty());
 
-</v-click>
+Minifier::new(options).minify(&allocator, &mut program);
+
+let mangler_ret = Mangler::new().with_options(mangle_options).build(&program);
+
+let out = Codegen::new().with_options(codegen_options).with_scoping(Some(mangler_ret.scoping))
+  .with_private_member_mappings(Some(mangler_ret.class_private_mappings)).build(&program);
+```
+
 </div>
+
+<style>
+pre code { font-size: 1.05em; }
+</style>
 
 ---
 transition: fade-out
 ---
 
-# Multi-threading
+# 4. Ast type
 
-<div style="font-size: 2em;">
+<div style="font-size: 1.5em;">
+
+Proposed:
+
+```rs
+let source: Source = Source::from_file(path).unwrap();
+
+let ast: Ast = source.parse_with_options(parse_options).unwrap();
+
+let ast: SemanticAst = ast.semantic().unwrap();
+
+let mut ast: ScopedAst = ast.transform(transform_options).unwrap();
+
+ast.minify(minify_options);
+
+ast.mangle(mangle_options);
+
+let out: CodegenReturn = ast.print(codegen_options);
+```
+
+</div>
+
+<style>
+pre code { font-size: 1.65em; }
+</style>
+
+---
+transition: slide-left
+---
+
+# 4. Ast type
+
+## Why?
+
+<div style="font-size: 1.5em;">
+
 <v-clicks>
 
-* Massive speed gain
-* Mysterious slowdown from worker threads
+* Simpler API (sugar)
+* Everything held together in one object
+* `Ast` is lifetime-less
+* Branded lifetimes - remove all bounds checks
+* Remove `Cell`s from AST - AST becomes `Sync`
 
 </v-clicks>
-</div>
 
----
-transition: slide-left
-clicks: 3
----
-
-# The other direction
-
-<!-- Two worlds -->
-
-<style>
-.world { width: 400px; height: 400px; object-fit: contain; }
-.arrow { font-size: 4em; color: #CCC; font-weight: bold; }
-.lang {
-  font-size: 5em;
-  font-weight: bold;
-  transform: translate(-50%, -50%);
-  text-shadow: 2px 2px 4px black, -2px -2px 4px black, 2px -2px 4px black, -2px 2px 4px black;
-}
-</style>
-
-<div style="display: flex; flex-direction: column; align-items: center;">
-<div style="display: flex; gap: 3rem; align-items: center; justify-content: center; position: relative; transform: scale(0.85); transform-origin: top center;">
-  <div style="position: relative;">
-    <img src="./images/world-orange.png" class="world" />
-    <div class="lang" style="position: absolute; top: 50%; left: 50%; color: #F74C00;">Rust</div>
-  </div>
-
-  <div :style="{ display: 'flex', alignItems: 'center', position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontSize: '5em', color: '#CCC', fontWeight: 'bold', transition: 'transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55)', transform: $clicks >= 1 ? 'translateX(-50%) scaleX(-1)' : 'translateX(-50%) scaleX(1)' }">→</div>
-
-  <div style="position: relative;">
-    <img src="./images/world-yellow.png" class="world" />
-    <div class="lang" style="position: absolute; top: 50%; left: 50%; color: #F7DF1E;">JS</div>
-  </div>
-</div>
-
-<div style="font-size: 2.5em; margin-top: -4rem; font-weight: bold;">
-  <span v-click="2" style="color: #F74C00;">Unsafe Rust </span>
-  <span v-click="3" style="color: #F7DF1E;">written in JS!</span>
-</div>
 </div>
 
 ---
 transition: slide-left
 ---
 
-# Plugin API design
+# 5. Allocator
 
-````md magic-move
-```js
-// ESLint
-const rule = {
-  create(context) {
-    let classCount = 0;
+<div style="font-size: 1.5em;">
 
-    return {
-      ClassDeclaration(node) {
-        classCount++;
-        if (classCount === 6) {
-          context.report({ message: "Too many classes", node });
-        }
-      },
-    };
-  },
-};
-```
-```js
-// Oxlint
-const rule = {
-  createOnce(context) {
-    let classCount;
+<v-clicks>
 
-    return {
-      before() {
-        classCount = 0;
-      },
-      ClassDeclaration(node) {
-        classCount++;
-        if (classCount === 6) {
-          context.report({ message: "Too many classes", node });
-        }
-      },
-    };
-  },
-};
-```
-````
+* Unify 2 `Allocator` impls
+* All `Allocator`s support raw transfer
+  * Unblocks Rolldown from using raw transfer for transform plugins
+  * Fix Windows OOM in Oxlint
+* AST and Semantic share strings arena
+* Shared "scratch" allocator
+* 1 `Allocator` per thread - good for CPU cache
+* Bounds check-less allocation
+* On disc AST caching with `mmap` (Rolldown)
 
-<style>
-.slidev-code {
-  --slidev-code-font-size: 16px;
-  --slidev-code-line-height: 24px;
-}
-</style>
+</v-clicks>
+
+</div>
 
 ---
-transition: fade-out
+transition: slide-left
 ---
 
-# All the things
+# How we do it
 
-<div style="font-size: 2em;">
-<v-click>
+<div style="font-size: 1.6em;">
 
-* Applicable to any data, not just ASTs
+<v-clicks>
 
-</v-click>
-<v-click>
+* Boris Tane "How I Use Claude Code" https://boristane.com/blog/how-i-use-claude-code/
+* Design docs committed to repo
+* Revise designs via PRs to design docs
+* Design -> Implementation plan - also committed
+* Set Claude on it, but step-by-step.
+* Keep human review.
+* Custom Clippy rules, style guide, etc.
 
-* Arena all the things!
+</v-clicks>
 
-</v-click>
-<v-click>
-
-* Design APIs with speed in mind
-
-</v-click>
-<v-click>
-
-<div style="text-align: center; font-size: 7em; margin-top: -0.2em;">✌️</div>
-
-</v-click>
 </div>
