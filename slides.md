@@ -308,7 +308,7 @@ After:
 
 ```rs
 let func: Function = /* ... */;
-let scope_id: ScopeFlags = func.scope_flags(ctx);
+let parent_scope_flags: ScopeFlags = func.parent_scope(ctx).flags;
 ```
 
 </div>
@@ -323,7 +323,7 @@ transition: fade-out
 
 # 4. Ast type
 
-<div style="font-size: 1.5em;">
+<div style="font-size: 2em;">
 
 <v-clicks>
 
