@@ -240,8 +240,8 @@ struct BinaryExpression<'a> {
     {{ $clicks >= 5 ? '8 bytes' : '16 bytes' }}
   </div>
   </div>
-  <div v-click="8" style="margin-top: 28px; font-size: 3em; font-weight: bold; color: #66bb6a;">
-    15%–20% reduction in AST memory
+  <div v-click="8" style="margin-top: 10px; font-size: 3em; font-weight: bold; color: #66bb6a;">
+    15%-20% reduction in AST memory
   </div>
 </div>
 
