@@ -28,6 +28,24 @@ h1 {
 </div>
 
 ---
+transition: slide-left
+---
+
+# Aims
+
+<div style="font-size: 2em;">
+
+<v-clicks>
+
+* Simpler APIs - easier for humans and agents
+* Breaking changes needed for performance
+* Polish data structures
+
+</v-clicks>
+
+</div>
+
+---
 transition: none
 ---
 
