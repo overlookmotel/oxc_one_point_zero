@@ -357,7 +357,7 @@ transition: fade
 
 <div style="font-size: 1.5em;">
 
-## **Now:**
+## **Compiler pipeline now:**
 
 ```rs
 let allocator = Allocator::default();
