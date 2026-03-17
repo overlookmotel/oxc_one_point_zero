@@ -118,13 +118,13 @@ pub struct FunctionExpression<'a> {
 
 ---
 transition: slide-left
-clicks: 8
+clicks: 6
 ---
 
 # 2. Pointer tagging
 
 <div style="display: flex; gap: 24px;">
-<div v-click="1" style="flex: 1;">
+<div style="flex: 1;">
 
 ```rs
 enum Expression<'a> {
@@ -140,9 +140,9 @@ enum Expression<'a> {
 ```
 
 </div>
-<div v-click="6" style="flex: 1;">
+<div v-click="4" style="flex: 1;">
 
-````md magic-move {at:7}
+````md magic-move {at:5}
 ```rs
 struct BinaryExpression<'a> {
     node_id: u32,
@@ -164,18 +164,18 @@ struct BinaryExpression<'a> {
 ````
 
 <div style="font-family: monospace; font-size: 1.5em; font-weight: bold; color: #aaa; margin-top: 8px; text-align: center;">
-  {{ $clicks >= 7 ? '32 bytes' : '48 bytes' }}
+  {{ $clicks >= 5 ? '32 bytes' : '48 bytes' }}
 </div>
 
 </div>
 </div>
 
-<div v-click="2" style="margin-top: 32px; font-family: monospace; font-size: 0.75em;">
+<div style="margin-top: 32px; font-family: monospace; font-size: 0.75em;">
   <div style="display: flex; align-items: flex-start; gap: 32px;">
   <div>
   <div style="position: relative; display: inline-block;">
     <div style="display: flex; border-radius: 6px; overflow: hidden;">
-      <div :style="{ display: 'flex', opacity: $clicks >= 5 ? 0 : 1, transition: 'opacity 0.4s ease' }">
+      <div :style="{ display: 'flex', opacity: $clicks >= 3 ? 0 : 1, transition: 'opacity 0.4s ease' }">
         <div style="width: 40px; height: 48px; background: repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 3px, #444 3px, #444 4px); border-right: 1px solid #555;"></div>
         <div style="width: 40px; height: 48px; background: repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 3px, #444 3px, #444 4px); border-right: 1px solid #444;"></div>
         <div style="width: 40px; height: 48px; background: repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 3px, #444 3px, #444 4px); border-right: 1px solid #444;"></div>
@@ -193,33 +193,33 @@ struct BinaryExpression<'a> {
       <div style="width: 40px; height: 48px; background: #34b99d; border-right: 1px solid #4a7a4a;"></div>
       <div style="width: 40px; height: 48px; background: #34b99d; border-right: 1px solid #4a7a4a;"></div>
       <div style="width: 40px; height: 48px; position: relative; background: #34b99d;">
-        <div v-click="3" style="position: absolute; inset: 0; background: repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 3px, #444 3px, #444 4px);"></div>
+        <div v-click="1" style="position: absolute; inset: 0; background: repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 3px, #444 3px, #444 4px);"></div>
       </div>
     </div>
-    <!-- Border overlay: surrounds all 16 cells normally, shrinks to bytes 8-15 at click 5 -->
+    <!-- Border overlay: surrounds all 16 cells normally, shrinks to bytes 8-15 at click 3 -->
     <div :style="{
       position: 'absolute',
       top: '-2px', bottom: '-2px',
-      left: $clicks >= 5 ? '318px' : '-2px',
+      left: $clicks >= 3 ? '318px' : '-2px',
       right: '-2px',
       border: '2px solid #555',
       borderRadius: '6px',
       pointerEvents: 'none',
       zIndex: 3,
     }"></div>
-    <!-- Green discriminant cell: slides from byte 0 to byte 15 on click 4 -->
+    <!-- Green discriminant cell: slides from byte 0 to byte 15 on click 2 -->
     <div :style="{
       position: 'absolute', top: '0', left: '0',
       width: '40px', height: '48px',
       background: '#00bc5e',
       zIndex: 10,
-      transform: $clicks >= 4 ? 'translateX(600px)' : 'translateX(0)',
-      transition: $clicks >= 4 ? 'transform 0.6s ease' : 'none',
+      transform: $clicks >= 2 ? 'translateX(600px)' : 'translateX(0)',
+      transition: $clicks >= 2 ? 'transform 0.6s ease' : 'none',
     }"></div>
   </div>
   <!-- Byte index labels -->
   <div style="display: flex; font-size: 0.7em; margin-top: 8px; color: #aaa;">
-    <div :style="{ display: 'flex', opacity: $clicks >= 5 ? 0 : 1, transition: 'opacity 0.4s ease' }">
+    <div :style="{ display: 'flex', opacity: $clicks >= 3 ? 0 : 1, transition: 'opacity 0.4s ease' }">
       <div style="width: 40px; text-align: center;">0</div>
       <div style="width: 40px; text-align: center;">1</div>
       <div style="width: 40px; text-align: center;"></div>
@@ -229,33 +229,36 @@ struct BinaryExpression<'a> {
       <div style="width: 40px; text-align: center;"></div>
       <div style="width: 40px; text-align: center;">7</div>
     </div>
-    <div style="width: 40px; text-align: center;">{{ $clicks >= 5 ? '0' : '8' }}</div>
+    <div style="width: 40px; text-align: center;">{{ $clicks >= 3 ? '0' : '8' }}</div>
     <div style="width: 40px; text-align: center;"></div>
     <div style="width: 40px; text-align: center;"></div>
     <div style="width: 40px; text-align: center;"></div>
     <div style="width: 40px; text-align: center;"></div>
     <div style="width: 40px; text-align: center;"></div>
     <div style="width: 40px; text-align: center;"></div>
-    <div style="width: 40px; text-align: center;">{{ $clicks >= 5 ? '7' : '15' }}</div>
+    <div style="width: 40px; text-align: center;">{{ $clicks >= 3 ? '7' : '15' }}</div>
   </div>
   <!-- Field annotations -->
   <div style="display: flex; margin-top: 6px;">
-    <div :style="{ display: 'flex', opacity: $clicks >= 5 ? 0 : 1, transition: 'opacity 0.4s ease' }">
+    <div :style="{ display: 'flex', opacity: $clicks >= 3 ? 0 : 1, transition: 'opacity 0.4s ease' }">
       <div style="width: 40px; text-align: center; color: #00e676;">Disc rim</div>
       <div style="width: 280px; text-align: center; color: #666;">padding</div>
     </div>
     <div style="width: 280px; text-align: center; color: #34b99d;">Pointer</div>
-    <div v-click="3" style="width: 40px; text-align: center;">
-      <span :style="{ color: $clicks >= 4 ? '#00e676' : '#aaa' }">{{ $clicks >= 4 ? 'Disc rim' : 'High bits' }}</span>
+    <div v-click="1" style="width: 40px; text-align: center;">
+      <span :style="{ color: $clicks >= 2 ? '#00e676' : '#aaa' }">{{ $clicks >= 2 ? 'Disc rim' : 'High bits' }}</span>
     </div>
   </div>
   </div>
   <div style="align-self: center; margin-top: -70px; font-size: 2em; font-weight: bold; color: #aaa; white-space: nowrap;">
-    {{ $clicks >= 5 ? '8 bytes' : '16 bytes' }}
+    {{ $clicks >= 3 ? '8 bytes' : '16 bytes' }}
   </div>
   </div>
-  <div v-click="8" style="margin-top: 10px; font-size: 3em; font-weight: bold; color: #66bb6a;">
+  <div v-click="6" style="margin-top: 10px; font-size: 3em; font-weight: bold; color: #66bb6a;">
     15%-20% reduction in AST memory
+  </div>
+  <div v-click="6">
+    <a href="https://github.com/oxc-project/backlog/issues/91" target="_blank">https://github.com/oxc-project/backlog/issues/91</a>
   </div>
 </div>
 
