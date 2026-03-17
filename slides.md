@@ -1,6 +1,6 @@
 ---
 theme: default
-title: JS plugins
+title: Oxc 1.0 - 5 item wish list
 class: text-center
 drawings:
   persist: false
