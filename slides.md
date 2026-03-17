@@ -268,7 +268,7 @@ transition: fade-out
 
 # 3. Semantic
 
-<div style="font-size: 1.5em;">
+<div style="font-size: 1.4em;">
 
 * Methods on types, not on `Semantic` / `Scoping`
 * `NodeId`s in AST nodes unlocks a lot
@@ -287,9 +287,11 @@ let parent: AstKind = ctx.nodes.parent_kind(ast_node.id());
 After:
 
 ```rs
-let expr: Expression = /* ... */;
-let parent: AstKind = expr.parent(ctx);
+let func: Function = /* ... */;
+let parent: AstKind = func.parent(ctx);
 ```
+
+* `AstNode` can be removed from codebase - no longer needed
 
 </div>
 
@@ -303,7 +305,7 @@ transition: slide-left
 
 # 3. Semantic
 
-<div style="font-size: 1.5em;">
+<div style="font-size: 1.4em;">
 
 * Methods on types, not on `Semantic` / `Scoping`
 * `NodeId`s in AST nodes unlocks a lot
