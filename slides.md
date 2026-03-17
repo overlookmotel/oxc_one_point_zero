@@ -35,13 +35,9 @@ transition: slide-left
 
 <div style="font-size: 2em;">
 
-<v-clicks>
-
 * Simpler APIs - easier for humans and agents
 * Breaking changes needed for performance
 * Polish data structures
-
-</v-clicks>
 
 </div>
 
@@ -269,14 +265,14 @@ transition: fade-out
 
 # 3. Semantic
 
-<div v-click="1" style="font-size: 1.5em;">
+<div style="font-size: 1.5em;">
 
 * Methods on types, not on `Semantic` / `Scoping`
 * `NodeId`s in AST nodes unlocks a lot
 
 </div>
 
-<div v-click="2" style="font-size: 1.2em;">
+<div style="font-size: 1.2em;">
 
 Before:
 
@@ -343,12 +339,8 @@ transition: fade-out
 
 <div style="font-size: 2em;">
 
-<v-clicks>
-
 * Now: Allocator owns AST
 * Instead: AST owns Allocator
-
-</v-clicks>
 
 </div>
 
@@ -358,9 +350,9 @@ transition: fade-out
 
 # 4. Ast type
 
-<div v-click="1" style="font-size: 1.5em;">
+<div style="font-size: 1.5em;">
 
-Now:
+## **Now:**
 
 ```rs
 let allocator = Allocator::default();
@@ -398,7 +390,7 @@ transition: fade-out
 
 <div style="font-size: 1.5em;">
 
-Proposed:
+## **Proposed:**
 
 ```rs
 let source: Source = Source::from_file(path).unwrap();
@@ -428,19 +420,15 @@ transition: slide-left
 
 # 4. Ast type
 
-## Why?
-
 <div style="font-size: 1.5em;">
 
-<v-clicks>
+## **Why?**
 
 * Simpler API (sugar)
 * Everything held together in one object
 * `Ast` is lifetime-less
 * Branded lifetimes - remove all bounds checks
 * Remove `Cell`s from AST - AST becomes `Sync`
-
-</v-clicks>
 
 </div>
 
@@ -452,8 +440,6 @@ transition: slide-left
 
 <div style="font-size: 1.5em;">
 
-<v-clicks>
-
 * Unify 2 `Allocator` impls
 * All `Allocator`s support raw transfer
   * Unblocks Rolldown from using raw transfer for transform plugins
@@ -463,8 +449,6 @@ transition: slide-left
 * 1 `Allocator` per thread - good for CPU cache
 * Bounds check-less allocation
 * On disc AST caching with `mmap` (Rolldown)
-
-</v-clicks>
 
 </div>
 
@@ -476,8 +460,6 @@ transition: slide-left
 
 <div style="font-size: 1.6em;">
 
-<v-clicks>
-
 * Boris Tane "How I Use Claude Code" https://boristane.com/blog/how-i-use-claude-code/
 * Design docs committed to repo
 * Revise designs via PRs to design docs
@@ -485,7 +467,5 @@ transition: slide-left
 * Set Claude on it, but step-by-step.
 * Keep human review.
 * Custom Clippy rules, style guide, etc.
-
-</v-clicks>
 
 </div>
