@@ -1,11 +1,37 @@
-# Welcome to [Slidev](https://github.com/slidevjs/slidev)!
+# Oxc 1.0 - 5 item wish list
 
-To start the slide show:
+A [Slidev](https://sli.dev) presentation about my personal "wish list" for before Oxc reaches 1.0.
 
-- `pnpm install`
-- `pnpm dev`
-- visit <http://localhost:3030>
+## Usage
 
-Edit the [slides.md](./slides.md) to see the changes.
+```sh
+pnpm install
+pnpm dev
+```
 
-Learn more about Slidev at the [documentation](https://sli.dev/).
+## Export as static site
+
+```sh
+pnpm build
+```
+
+Output is written to `dist/`. To preview it locally:
+
+```sh
+pnpm dlx serve dist
+```
+
+If hosting under a sub-path, use `--base`:
+
+```sh
+pnpm build -- --base /talks/oxc-one-point-zero/
+```
+
+## Export as PDF
+
+```sh
+pnpm export
+```
+
+Output is written to `slides-export.pdf`. Requires `playwright-chromium`
+(already in `devDependencies`).
