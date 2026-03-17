@@ -21,10 +21,10 @@ Output is written to `dist/`. To preview it locally:
 pnpm dlx serve dist
 ```
 
-If hosting under a sub-path, use `--base`:
+If hosting under a sub-path, set the `BASE_PATH` environment variable:
 
 ```sh
-pnpm build -- --base /talks/oxc-one-point-zero/
+BASE_PATH=/oxc_one_point_zero/ pnpm build
 ```
 
 ## Export as PDF
