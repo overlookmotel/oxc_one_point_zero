@@ -263,7 +263,7 @@ struct BinaryExpression<'a> {
 </div>
 
 ---
-transition: fade-out
+transition: fade
 ---
 
 # 3. Semantic
@@ -337,7 +337,7 @@ pre code { font-size: 1.5em; }
 </style>
 
 ---
-transition: fade-out
+transition: fade
 ---
 
 # 4. Ast type
@@ -350,7 +350,7 @@ transition: fade-out
 </div>
 
 ---
-transition: fade-out
+transition: fade
 ---
 
 # 4. Ast type
@@ -388,7 +388,7 @@ pre code { font-size: 1.05em; }
 </style>
 
 ---
-transition: fade-out
+transition: fade
 ---
 
 # 4. Ast type
